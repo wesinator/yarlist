@@ -1,4 +1,4 @@
-import glob, os, sys
+import glob, os
 
 
 def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove=''):
