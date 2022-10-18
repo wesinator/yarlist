@@ -18,7 +18,7 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
         yara_rulename = (prefix_word + filename)[:128]
         # validate yara rulename, replace invalid chars
         if yara_rulename[0].isdigit():
-            yara_rulename = '_' + yara_rulename
+            yara_rulename = '_' + yara_rulename[:127]
         yara_rulename_charmap = yara_rulename.maketrans("".join([' ', '.', '-']), "___")
         yara_rulename = yara_rulename.translate(yara_rulename_charmap)
         #yara_rulename = yara_rulename.replace("-", "_").replace(" ", '_')
