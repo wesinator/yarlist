@@ -1,7 +1,7 @@
 import glob, os
 
 
-def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove=''):
+def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove='', ruleset_license=''):
     yara_ruleset = ""
     
     files = glob.glob(filepath + "{0}*".format(os.sep))
@@ -27,17 +27,21 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
             lines = f.readlines()
         yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
         #print(yara_strings)
-        
-        yara_rule = '''rule {0} {{
-    meta:
-        source = "{1}"
+
+        rule_license_field = ""
+        if ruleset_license:
+            rule_license_field = "\n        license = \"{}\"".format(ruleset_license)
+
+        yara_rule = '''rule {} {{
+    meta:{}
+        source = "{}"
     strings:
-{2}
+{}
     condition:
         any of them
 }}
 
-'''.format(yara_rulename, filename, "\n".join(yara_strings))
+'''.format(yara_rulename, rule_license_field, filename, "\n".join(yara_strings))
         #print(yara_rule)
         
         yara_ruleset += yara_rule
