@@ -1,11 +1,16 @@
 import glob, os
 
 
-def filetext_to_yara_strings(file, char_to_remove=''):
+def filetext_to_yara_strings(file, char_to_remove='', fullword=True, nocase=False, xor=False):
     with open(file, 'r') as f:
         try:
             lines = f.readlines()
-            yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
+            yara_strings = ["        $ = \"{}\"{}{}{} wide ascii"
+                        .format(line.strip().replace(char_to_remove, ''),
+                        ('', " fullword")[fullword],
+                        ('', " nocase")[nocase & ~xor],
+                        ('', " xor")[xor & ~nocase])
+                        for line in lines]
             return yara_strings
         except Exception as e:
             print("An error occurred reading `%s`: " % file, e)
