@@ -11,7 +11,7 @@ def filetext_to_yara_strings(file, char_to_remove=''):
             print("An error occurred reading `%s`: " % file, e)
 
 
-def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove='', ruleset_license=''):
+def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove='', ruleset_license='', any_cond=True):
     yara_ruleset = ""
 
     files = glob.glob(filepath + "{0}*".format(os.sep))
@@ -43,9 +43,9 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
     strings:
 {}
     condition:
-        any of them
+        {} of them
 }}
-'''.format(yara_rulename, rule_license_field, filename, "\n".join(filetext_to_yara_strings(file, char_to_remove)))
+'''.format(yara_rulename, rule_license_field, filename, "\n".join(filetext_to_yara_strings(file, char_to_remove)), ("all", "any")[any_cond])
         #print(yara_rule)
 
         yara_ruleset += yara_rule
