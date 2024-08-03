@@ -1,6 +1,16 @@
 import glob, os
 
 
+def filetext_to_yara_strings(file, char_to_remove=''):
+    with open(file, 'r') as f:
+        try:
+            lines = f.readlines()
+            yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
+            return yara_strings
+        except Exception as e:
+            print("An error occurred reading `%s`: " % file, e)
+
+
 def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="", char_to_remove='', ruleset_license=''):
     yara_ruleset = ""
 
@@ -23,15 +33,6 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
         yara_rulename = yara_rulename.translate(yara_rulename_charmap)
         #yara_rulename = yara_rulename.replace("-", "_").replace(" ", '_')
 
-        with open(file, 'r') as f:
-            try:
-                lines = f.readlines()
-                yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
-                #print(yara_strings)
-            except Exception as e:
-                print("An error occurred reading `%s`: " % file, e)
-                return
-
         rule_license_field = ""
         if ruleset_license:
             rule_license_field = "\n        license = \"{}\"".format(ruleset_license)
@@ -44,7 +45,7 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
     condition:
         any of them
 }}
-'''.format(yara_rulename, rule_license_field, filename, "\n".join(yara_strings))
+'''.format(yara_rulename, rule_license_field, filename, "\n".join(filetext_to_yara_strings(file, char_to_remove)))
         #print(yara_rule)
 
         yara_ruleset += yara_rule
