@@ -23,14 +23,14 @@ def generate_yara_from_lists(filepath, prefix_word="", filename_word_to_remove="
         yara_rulename = yara_rulename.translate(yara_rulename_charmap)
         #yara_rulename = yara_rulename.replace("-", "_").replace(" ", '_')
 
-        try:
-            with open(file, 'r') as f:
+        with open(file, 'r') as f:
+            try:
                 lines = f.readlines()
-            yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
-            #print(yara_strings)
-        except Exception as e:
-            print("An error occurred reading `%s`: " % file, e)
-            return
+                yara_strings = ["        $ = \"{}\" fullword wide ascii".format(line.strip().replace(char_to_remove, '')) for line in lines]
+                #print(yara_strings)
+            except Exception as e:
+                print("An error occurred reading `%s`: " % file, e)
+                return
 
         rule_license_field = ""
         if ruleset_license:
